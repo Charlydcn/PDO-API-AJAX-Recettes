@@ -38,11 +38,7 @@ newRecipeForm.addEventListener("submit", function(e) {
 
 newRecipeForm.addEventListener("submit", async function(e) {
     e.preventDefault()
-
     createRecipe()
-    clearForm()
-
-    loadRecipes()
 })
 
 async function createRecipe() {
@@ -71,6 +67,9 @@ async function createRecipe() {
         }
         
         alert('Votre recette a bien été ajoutée')
+        
+        loadRecipes()
+        clearForm()
     } catch(error) {
         console.error('Erreur :', error.message)
     }
@@ -102,60 +101,43 @@ async function loadRecipes() {
 }
 
 async function deleteRecipe(id) {
-    try {
-        const response = await fetch(`api.php?action=deleteRecipe&id=${id}`, {
-            method: 'DELETE',
-        })
-
-        if (!response.ok) {
-            throw new Error(`Erreur de chargement : ${response.status}`)
-        }
-    } catch(error) {
-            console.error('Erreur :', error.message)
-        }
+    if(confirm('Voulez-vous vraiment supprimer cette recette ?')) {
+        try {
+            const response = await fetch(`api.php?action=deleteRecipe&id=${id}`, {
+                method: 'DELETE',
+            })
+    
+            if (!response.ok) {
+                throw new Error(`Erreur de chargement : ${response.status}`)
+            }
+    
+            loadRecipes()
+        } catch(error) {
+                console.error('Erreur :', error.message)
+            }
+    }
 
 }
 
 function displayRecipes(data) {
     var recipesContainer = document.querySelector('#recipes')
+    recipesContainer.innerHTML = ''
 
-    if(data.length <= 0) {
-        const text = document.createElement('h2')
-        text.innerHTML = 'Pas encore de recette en base de données, créez la vôtre !'
-
-        recipesContainer.appendChild(text)
+    if (data.length <= 0) {
+        recipesContainer.innerHTML = '<p>Aucune recette en base de données</p>'
     }
 
     data.forEach((recipe) => {
-        
-        const recipeContainer = document.createElement('div')
-        recipeContainer.classList.add('recipe')
+        const recipeElement = document.createElement('li')
+        recipeElement.classList.add('recipe')
 
-        const title = document.createElement('h3')
-        title.innerHTML = recipe['title']
-        recipeContainer.appendChild(title)
+        recipeElement.innerHTML = `
+            <h3>${recipe['title']}</h3>
+            <p>${recipe['description']}</p>
+            <p>Temps de préparation : ${recipe['preparation_time']}</p>
+            <button class="delete-btn btn btn-danger" onclick="deleteRecipe(${recipe['id']})">Supprimer</button>`
 
-        const description = document.createElement('p')
-        description.innerHTML = recipe['description']
-        recipeContainer.appendChild(description)
-
-        const prepTime = document.createElement('p')
-        prepTime.innerHTML = `Temps de préparation : ${recipe['preparation_time']} min`
-        recipeContainer.appendChild(prepTime)
-
-        const deleteBtn = document.createElement('button')
-        deleteBtn.innerHTML = 'Supprimer'
-        deleteBtn.classList.add('btn', 'btn-danger')
-        recipeContainer.appendChild(deleteBtn)
-
-        recipesContainer.appendChild(recipeContainer)
-
-        deleteBtn.addEventListener('click', () => {
-            if (confirm('Êtes-vous sûr(e) de vouloir supprimer cette recette ?')) {
-                deleteRecipe(recipe['id'])
-                loadRecipes()
-            }
-        })
+        recipesContainer.appendChild(recipeElement)
     })
 }
 
