@@ -1,5 +1,13 @@
 const newRecipeForm = document.querySelector('#new-recipe-form')
 
+$('#show-new-recipe-form-btn').on('click', function() {
+    if ($('#new-recipe-form').css('display') === 'none') {
+        $('#new-recipe-form').slideDown()
+    } else {
+        $('#new-recipe-form').slideUp()
+    }
+})
+
 document.addEventListener('DOMContentLoaded', () => {
     loadRecipes()
 })
@@ -65,8 +73,6 @@ async function createRecipe() {
         if (!response.ok) {
             throw new Error(`Erreur d'ajout : ${response.status}`)
         }
-        
-        alert('Votre recette a bien été ajoutée')
         
         loadRecipes()
         clearForm()
@@ -135,7 +141,7 @@ function displayRecipes(data) {
             <h3>${recipe['title']}</h3>
             <p>${recipe['description']}</p>
             <p>Temps de préparation : ${recipe['preparation_time']}</p>
-            <button class="delete-btn btn btn-danger" onclick="deleteRecipe(${recipe['id']})">Supprimer</button>`
+            <i class="delete-btn fa-solid fa-trash" onclick="deleteRecipe(${recipe['id']})"></i>`
 
         recipesContainer.appendChild(recipeElement)
     })
