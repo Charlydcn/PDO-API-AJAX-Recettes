@@ -10,7 +10,11 @@ if (isset($_GET['action'])) {
     switch($_GET['action']){
 
         case "getRecipes":
-            $stmt = $pdo->query('SELECT id, title, description, preparation_time FROM recette');
+            $stmt = $pdo->query(
+                'SELECT id, title, description, preparation_time
+                FROM recette
+                ORDER BY id DESC');
+                
             $recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode($recipes);
