@@ -14,7 +14,7 @@ if (isset($_GET['action'])) {
                 'SELECT id, title, description, preparation_time
                 FROM recette
                 ORDER BY id DESC');
-                
+
             $recipes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             echo json_encode($recipes);
@@ -50,8 +50,7 @@ if (isset($_GET['action'])) {
             $id = filter_input(INPUT_GET, "id", FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_VALIDATE_INT);
 
             if ($id) {
-                $sql = "DELETE recette
-                        FROM recette
+                $sql = "DELETE FROM recette
                         WHERE id = :id";
 
                 $stmt = $pdo->prepare($sql);
